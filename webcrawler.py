@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[17]:
 
 
 import re
@@ -20,7 +20,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-# In[8]:
+# In[18]:
 
 
 def remove_query_from_url(url):
@@ -28,7 +28,7 @@ def remove_query_from_url(url):
     return "".join([parsed.scheme,"://",parsed.netloc,parsed.path])
 
 
-# In[13]:
+# In[19]:
 
 
 class Scheduler:
@@ -296,12 +296,12 @@ if __name__ == "__main__":
     ).run()
 
 
-# In[14]:
+# In[20]:
 
 
 # num_crawler = 5
 # crawler = Scheduler(
-#     seed_url ='https://www2.ku.ac.th',
+#     seed_url ='https://login.ku.ac.th',
 #     num_crawler = num_crawler,
 #     whitelist_file_types = ['html', 'htm'],
 #     whitelist_domain = 'ku.ac.th',
