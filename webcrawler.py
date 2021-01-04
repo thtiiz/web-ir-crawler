@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[17]:
+# In[1]:
 
 
 import re
@@ -20,7 +20,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 
-# In[18]:
+# In[2]:
 
 
 def remove_query_from_url(url):
@@ -28,7 +28,7 @@ def remove_query_from_url(url):
     return "".join([parsed.scheme,"://",parsed.netloc,parsed.path])
 
 
-# In[19]:
+# In[7]:
 
 
 class Scheduler:
@@ -145,7 +145,7 @@ class Scheduler:
     def get_raw_html(self, url):
         text = ''
         try:
-            response = requests.get(url, headers=self.headers, timeout=50, verify=False)
+            response = requests.get(url, headers=self.headers, timeout=1, verify=False)
             # If the response was successful, no Exception will be raised
             response.raise_for_status()
         except HTTPError as http_err:
@@ -155,7 +155,8 @@ class Scheduler:
         else:
             # print('Success!')
             text = response.text
-        return text
+        finally:
+            return text
 
     def check_and_save_robots(self, robot_url):
         try:
@@ -163,23 +164,29 @@ class Scheduler:
             is_valid = 'User-agent:' in raw
             if(is_valid):
                 self.save_to_disk(robot_url, raw)
+            return is_valid
         except:
             print(f'Error in check_and_save_robots')
+        finally:
+            return False
 
     def get_parsed_robots(self, base_url):
         rp = RobotFileParser()
+        robots_url = urljoin(base_url, 'robots.txt')
         try:
+            is_valid = self.check_and_save_robots(robots_url)
+            if(not is_valid):
+                raise Exception("Not found robots")
+
             if(base_url in self.parsed_robots_domains.keys()):
                 rp = self.parsed_robots_domains[base_url]
             else:
-                robots_url = urljoin(base_url, 'robots.txt')
                 rp.set_url(robots_url)
                 rp.read()
                 self.parsed_robots_domains[base_url] = rp
-                self.check_and_save_robots(robots_url)
         except:
             # allow all
-            rp.set_url(self.seed_url)
+            rp.set_url('https://ku.ac.th')
             rp.read()
             self.parsed_robots_domains[base_url] = rp
         finally:
@@ -278,7 +285,7 @@ class Scheduler:
         # print(self.parsed_robots_domains)
 
 
-# In[3]:
+# In[ ]:
 
 
 if __name__ == "__main__":
@@ -296,7 +303,7 @@ if __name__ == "__main__":
     ).run()
 
 
-# In[20]:
+# In[8]:
 
 
 # num_crawler = 5
