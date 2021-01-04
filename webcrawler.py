@@ -145,7 +145,7 @@ class Scheduler:
     def get_raw_html(self, url):
         text = ''
         try:
-            response = requests.get(url, headers=self.headers, timeout=1, verify=False)
+            response = requests.get(url, headers=self.headers, timeout=30, verify=False)
             # If the response was successful, no Exception will be raised
             response.raise_for_status()
         except HTTPError as http_err:
