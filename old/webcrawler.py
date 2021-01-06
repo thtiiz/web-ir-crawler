@@ -28,7 +28,7 @@ def remove_query_from_url(url):
     return "".join([parsed.scheme,"://",parsed.netloc,parsed.path])
 
 
-# In[7]:
+# In[19]:
 
 
 class Scheduler:
@@ -108,6 +108,7 @@ class Scheduler:
                 save_folder_path = 'html/' + hostname + url_path
                 save_filename = 'index.html'
             
+            save_folder_path = save_folder_path.strip('/')
             save_abs_path = save_folder_path + '/' + save_filename
 
             print(f'savepath: {save_folder_path}')
@@ -167,12 +168,12 @@ class Scheduler:
             return is_valid
         except:
             print(f'Error in check_and_save_robots')
-        finally:
             return False
+
 
     def get_parsed_robots(self, base_url):
         rp = RobotFileParser()
-        robots_url = urljoin(base_url, 'robots.txt')
+        robots_url = base_url + '/robots.txt'
         try:
             is_valid = self.check_and_save_robots(robots_url)
             if(not is_valid):
@@ -188,7 +189,6 @@ class Scheduler:
             # allow all
             rp.set_url('https://ku.ac.th')
             rp.read()
-            self.parsed_robots_domains[base_url] = rp
         finally:
             return rp
 
@@ -225,12 +225,13 @@ class Scheduler:
         try:
             if(base_url in self.parsed_sitemap_domains):
                 return urls
-            else:
-                self.parsed_sitemap_domains.append(base_url)
 
             xml = self.get_raw_html(base_url + '/sitemap.xml')
             soup = BeautifulSoup(xml)
             urlsetTag = soup.find_all("loc")
+            urlsetTag = list(urlsetTag)
+            if(len(urlsetTag) > 0):
+                self.parsed_sitemap_domains.append(base_url)
             sitemap_urls = [url.getText() for url in urlsetTag]
             urls[0:0] = sitemap_urls
             return urls
@@ -303,23 +304,16 @@ if __name__ == "__main__":
     ).run()
 
 
-# In[8]:
-
-
-# num_crawler = 5
-# crawler = Scheduler(
-#     seed_url ='https://login.ku.ac.th',
-#     num_crawler = num_crawler,
-#     whitelist_file_types = ['html', 'htm'],
-#     whitelist_domain = 'ku.ac.th',
-#     user_agent = "Oporbot"
-# )
-# crawler.run()
-# raw = crawler.save_to_disk('https://www.pr.ku.ac.th/asd/robots.txt', '')
-
-
 # In[ ]:
 
 
-
+# num_crawler = 10000
+# crawler = Scheduler(
+#     seed_url ='https://ku.ac.th/th',
+#     num_crawler = num_crawler,
+#     whitelist_file_types = ['html', 'htm'],
+#     whitelist_domain = 'ku.ac.th',
+#     user_agent = "Thitiwat_Bot"
+# )
+# crawler.run()
 
